@@ -25,55 +25,30 @@ import javax.persistence.Transient;
 import com.thiagobernardo.pontointeligente.api.enums.PerfilEnum;
 
 @Entity
-@Table(name = "empresa")
+@Table(name = "funcionario")
 public class Funcionario implements Serializable {
-	
-	private static final long serialVersionUID = -356324076980515775L;
 
-	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+	private static final long serialVersionUID = -5754246207015712518L;
+	
 	private Long id;
-	
-	@Column(name = "nome", nullable = false)
 	private String nome;
-	
-	@Column(name = "email", nullable = false)
 	private String email;
-	
-	@Column(name = "senha", nullable = false)
 	private String senha;
-	
-	@Column(name = "cpf", nullable = false)
 	private String cpf;
-	
-	@Column(name = "valor_hora", nullable = true)
 	private BigDecimal valorHora;
-	
-	@Column(name = "qtd_horas_trabalho_dia", nullable = true)
 	private Float qtdHorasTrabalhoDia;
-	
-	@Column(name = "qtd_horas_almoco", nullable = true)
 	private Float qtdHorasAlmoco;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "perfil", nullable = false)
 	private PerfilEnum perfil;
-	
-	@Column(name = "data_criacao", nullable = false)
 	private Date dataCriacao;
-	
-	@Column(name = "data_atualizacao", nullable = false)
 	private Date dataAtualizacao;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
 	private Empresa empresa;
-	
-	@OneToMany(mappedBy = "funcionario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Lancamento> lancamentos;
 
 	public Funcionario() {
 	}
 
+	@Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
 	public Long getId() {
 		return id;
 	}
@@ -82,6 +57,7 @@ public class Funcionario implements Serializable {
 		this.id = id;
 	}
 
+	@Column(name = "nome", nullable = false)
 	public String getNome() {
 		return nome;
 	}
@@ -90,6 +66,7 @@ public class Funcionario implements Serializable {
 		this.nome = nome;
 	}
 
+	@Column(name = "email", nullable = false)
 	public String getEmail() {
 		return email;
 	}
@@ -98,6 +75,7 @@ public class Funcionario implements Serializable {
 		this.email = email;
 	}
 
+	@Column(name = "cpf", nullable = false)
 	public String getCpf() {
 		return cpf;
 	}
@@ -106,6 +84,7 @@ public class Funcionario implements Serializable {
 		this.cpf = cpf;
 	}
 
+	@Column(name = "valor_hora", nullable = true)
 	public BigDecimal getValorHora() {
 		return valorHora;
 	}
@@ -119,6 +98,7 @@ public class Funcionario implements Serializable {
 		this.valorHora = valorHora;
 	}
 
+	@Column(name = "qtd_horas_trabalho_dia", nullable = true)
 	public Float getQtdHorasTrabalhoDia() {
 		return qtdHorasTrabalhoDia;
 	}
@@ -132,6 +112,7 @@ public class Funcionario implements Serializable {
 		this.qtdHorasTrabalhoDia = qtdHorasTrabalhoDia;
 	}
 
+	@Column(name = "qtd_horas_almoco", nullable = true)
 	public Float getQtdHorasAlmoco() {
 		return qtdHorasAlmoco;
 	}
@@ -145,6 +126,8 @@ public class Funcionario implements Serializable {
 		this.qtdHorasAlmoco = qtdHorasAlmoco;
 	}
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "perfil", nullable = false)
 	public PerfilEnum getPerfil() {
 		return perfil;
 	}
@@ -153,6 +136,7 @@ public class Funcionario implements Serializable {
 		this.perfil = perfil;
 	}
 
+	@Column(name = "data_criacao", nullable = false)
 	public Date getDataCriacao() {
 		return dataCriacao;
 	}
@@ -161,6 +145,7 @@ public class Funcionario implements Serializable {
 		this.dataCriacao = dataCriacao;
 	}
 
+	@Column(name = "data_atualizacao", nullable = false)
 	public Date getDataAtualizacao() {
 		return dataAtualizacao;
 	}
@@ -169,6 +154,7 @@ public class Funcionario implements Serializable {
 		this.dataAtualizacao = dataAtualizacao;
 	}
 
+	@Column(name = "senha", nullable = false)
 	public String getSenha() {
 		return senha;
 	}
@@ -177,6 +163,7 @@ public class Funcionario implements Serializable {
 		this.senha = senha;
 	}
 
+	@ManyToOne(fetch = FetchType.EAGER)
 	public Empresa getEmpresa() {
 		return empresa;
 	}
@@ -185,6 +172,7 @@ public class Funcionario implements Serializable {
 		this.empresa = empresa;
 	}
 
+	@OneToMany(mappedBy = "funcionario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	public List<Lancamento> getLancamentos() {
 		return lancamentos;
 	}
@@ -204,31 +192,6 @@ public class Funcionario implements Serializable {
         dataCriacao = atual;
         dataAtualizacao = atual;
     }
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Funcionario other = (Funcionario) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
 
 	@Override
 	public String toString() {
