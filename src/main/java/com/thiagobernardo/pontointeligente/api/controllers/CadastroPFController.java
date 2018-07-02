@@ -75,9 +75,9 @@ private static final Logger log = LoggerFactory.getLogger(CadastroPFController.c
 		
 		Optional<Empresa> empresa = this.empresaService.buscarPorCnpj(cadastroPFDTO.getCnpj());
 		empresa.ifPresent(emp -> funcionario.setEmpresa(emp));
-		this.funcionarioService.persistir(funcionario);
+		Funcionario newFuncionario = this.funcionarioService.persistir(funcionario);
 
-		response.setData(this.converterCadastroPFDTO(funcionario));
+		response.setData(this.converterCadastroPFDTO(newFuncionario));
 		return ResponseEntity.ok(response);
 	}
 

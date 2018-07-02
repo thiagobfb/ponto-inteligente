@@ -3,11 +3,11 @@
  */
 package com.thiagobernardo.pontointeligente.api.controllers;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -25,7 +25,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.thiagobernardo.pontointeligente.api.dtos.CadastroPFDTO;
 import com.thiagobernardo.pontointeligente.api.entities.Empresa;
 import com.thiagobernardo.pontointeligente.api.entities.Funcionario;
@@ -55,8 +57,9 @@ public class CadastroPFControllerTest {
 	
 	private static final String CADASTRAR_PF_URL = "/api/cadastrar-pf";
 	private static final Long ID = Long.valueOf(1);
+	private static final Long ID_FUNCIONARIO = Long.valueOf(1);
 	private static final String CNPJ = "51463645000100";
-	private static final String VALOR_HORA = "50";
+	private static final String VALOR_HORA = "50.0";
 	private static final String NOME = "Fulano";
 	private static final String CPF = "55437611200";
 	private static final String EMAIL = "fulano@dedeus.com";
@@ -64,26 +67,25 @@ public class CadastroPFControllerTest {
 	@Test
 	@WithMockUser
 	public void testCadastrar_isValido() throws Exception {
-		BDDMockito.given(this.funcionarioService.persistir(Mockito.any(Funcionario.class))).willReturn(this.obterDadosFuncionario());
 		BDDMockito.given(this.empresaService.buscarPorCnpj(Mockito.anyString())).willReturn(Optional.of(this.obterDadosEmpresa()));
-		CadastroPFDTO retorno = this.obterCadastroPFRetorno();
-		
+		BDDMockito.given(this.funcionarioService.persistir(Mockito.any(Funcionario.class))).willReturn(this.obterDadosFuncionario());
+		String request = this.obterCadastroPFRequest();
+
 		mvc.perform(MockMvcRequestBuilders.post(CADASTRAR_PF_URL)
-				.content(asJsonString(retorno))
+				.content(request)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isBadRequest());
-//				.andExpect(jsonPath("$.data.id").value(nullValue()))
-//				.andExpect(jsonPath("$.data.nome", equalTo(retorno.getNome())))
-//				.andExpect(jsonPath("$.data.email", equalTo(retorno.getEmail())))
-//				.andExpect(jsonPath("$.data.senha").value(nullValue()))
-//				.andExpect(jsonPath("$.data.cpf", equalTo(retorno.getCpf())))
-//				.andExpect(jsonPath("$.data.valorHora").value(nullValue()))
-//				.andExpect(jsonPath("$.data.qtdHorasTrabalhoDia").value(nullValue()))
-//				.andExpect(jsonPath("$.data.qtdHorasAlmoco").value(nullValue()))
-//				.andExpect(jsonPath("$.data.cnpj", equalTo(retorno.getCnpj())))
-//				.andExpect(jsonPath("$.errors").isEmpty())
-//				.andReturn();
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.data.id").value(ID_FUNCIONARIO))
+				.andExpect(jsonPath("$.data.nome").value(NOME))
+				.andExpect(jsonPath("$.data.email").value(EMAIL))
+				.andExpect(jsonPath("$.data.senha").value(nullValue()))
+				.andExpect(jsonPath("$.data.cpf").value(CPF))
+				.andExpect(jsonPath("$.data.valorHora").value(VALOR_HORA))
+				.andExpect(jsonPath("$.data.qtdHorasTrabalhoDia").value(nullValue()))
+				.andExpect(jsonPath("$.data.qtdHorasAlmoco").value(nullValue()))
+				.andExpect(jsonPath("$.data.cnpj").value(CNPJ))
+				.andExpect(jsonPath("$.errors").isEmpty());
 	}
 	
 	private Empresa obterDadosEmpresa() {
@@ -96,35 +98,34 @@ public class CadastroPFControllerTest {
 	
 	private Funcionario obterDadosFuncionario() {
 		Funcionario funcionario = new Funcionario();
+		funcionario.setId(ID_FUNCIONARIO);
 		funcionario.setNome(NOME);
 		funcionario.setEmail(EMAIL);
 		funcionario.setCpf(CPF);
 		funcionario.setPerfil(PerfilEnum.ROLE_USUARIO);
 		funcionario.setSenha(PasswordUtils.gerarBCrypt("123456"));
-		funcionario.setQtdHorasAlmoco(Float.valueOf(VALOR_HORA));
+		funcionario.setValorHora(BigDecimal.valueOf(Float.valueOf(VALOR_HORA)));
+		funcionario.setEmpresa(obterDadosEmpresa());
 		
 		return funcionario;
 	}
 	
-	private CadastroPFDTO obterCadastroPFRetorno() {
+	private String obterCadastroPFRequest() throws JsonProcessingException {
 		CadastroPFDTO cadastroPFDTO = new CadastroPFDTO();
-//		cadastroPFDTO.setId(ID);
+		cadastroPFDTO.setId(null);
 		cadastroPFDTO.setNome(NOME);
 		cadastroPFDTO.setEmail(EMAIL);
 		cadastroPFDTO.setSenha("123456");
 		cadastroPFDTO.setCpf(CPF);
-//		cadastroPFDTO.setValorHora(Optional.of(VALOR_HORA));
+		cadastroPFDTO.setValorHora(Optional.of(VALOR_HORA));
+		cadastroPFDTO.setQtdHorasAlmoco(null);
+		cadastroPFDTO.setQtdHorasTrabalhoDia(null);
 		cadastroPFDTO.setCnpj(CNPJ);
 		
-		return cadastroPFDTO;
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.registerModule(new Jdk8Module());
+		return mapper.writeValueAsString(cadastroPFDTO);
 	}
-	
-	public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 }

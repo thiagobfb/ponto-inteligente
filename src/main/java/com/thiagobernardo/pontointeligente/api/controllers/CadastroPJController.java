@@ -100,6 +100,7 @@ public class CadastroPJController {
 		
 		return cadastroPJDTO;
 	}
+	{}
 
 	/**
 	 * Converte os dados do DTO para funcionário.
