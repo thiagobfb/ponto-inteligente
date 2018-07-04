@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	/* (non-Javadoc)
 	 * @see com.thiagobernardo.pontointeligente.api.services.LancamentoService#buscarPorId(java.lang.Long)
 	 */
+	@Cacheable("lancamentoPorId")
 	@Override
 	public Optional<Lancamento> buscarPorId(Long id) {
 		log.info("Buscando lançamento pelo ID {}", id);
@@ -49,6 +52,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 	/* (non-Javadoc)
 	 * @see com.thiagobernardo.pontointeligente.api.services.LancamentoService#persistir(com.thiagobernardo.pontointeligente.api.entities.Lancamento)
 	 */
+	@CachePut("lancamentoPorId")
 	@Override
 	public Lancamento persistir(Lancamento lancamento) {
 		log.info("Persistindo lançamento {}", lancamento);
