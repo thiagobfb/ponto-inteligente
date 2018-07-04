@@ -38,7 +38,7 @@ import com.thiagobernardo.pontointeligente.api.utils.PasswordUtils;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureMockMvc(secure = false)
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class CadastroPJControllerTest {
 	

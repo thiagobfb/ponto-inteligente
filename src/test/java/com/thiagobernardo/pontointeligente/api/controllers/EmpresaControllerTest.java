@@ -33,7 +33,7 @@ import com.thiagobernardo.pontointeligente.api.services.EmpresaService;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureMockMvc(secure = false)
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 public class EmpresaControllerTest {
 	

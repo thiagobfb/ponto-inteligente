@@ -63,10 +63,9 @@ public class LancamentoRepositoryTest {
 		assertEquals(2, lancamentos.size());
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Test
 	public void testBuscarLancamentosPorFuncionarioIdPaginado() {
-		PageRequest page = new PageRequest(0, 10);
+		PageRequest page = PageRequest.of(0, 10);
 		Page<Lancamento> lancamentos = this.lancamentoRepository.findByFuncionarioId(funcionarioId, page);
 		
 		assertEquals(2, lancamentos.getTotalElements());
